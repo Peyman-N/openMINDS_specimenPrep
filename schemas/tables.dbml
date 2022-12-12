@@ -1,0 +1,67 @@
+Table ChemicalMixture{
+    name string
+    ChemicalMixtureType controlledTerms
+    components graphlink 
+    productSource graphlink 
+    additionalRemarks string 
+}
+
+Table SubjectState{
+  state graphlink
+}
+
+Table TissueSampleState{
+  state graphlink
+}
+
+Table CranialWindowPreparation {
+  CranialWindowReinforcementType controlledTerms
+  CranialWindowConstructionType controlledTerms
+  dimensio mathematicalShapes
+  input graphlink [ref: - SubjectState.state]
+  output graphlink [ref: - SubjectState.state]
+}
+
+Table devicePlacment {
+  device deviceUsage
+  targetPosition AnatomicalTargetPosition
+  input graphlink [ref: - SubjectState.state]
+  output graphlink [ref: - SubjectState.state]
+}
+ref: devicePlacment.input - TissueSampleState.state
+ref: devicePlacment.output - TissueSampleState.state
+
+
+Table TissueCulturePreparation {
+  cellCultureType controlledTerms
+  cultureMedium graphlink [ref: - ChemicalMixture.name]
+  input graphlink [ref: - SubjectState.state]
+  output graphlink [ref: - TissueSampleState.state]
+}
+ref: TissueCulturePreparation.input - TissueSampleState.state
+
+Table SlicingDevice{
+  name string
+  manufacturer string
+  serialNumber string
+  deviceType controlledTerms
+  description string
+}
+
+Table SlicingDeviceUsage{
+  device graphlink [ref: - SlicingDevice.name]
+  slicingSpeed quantitativeValue
+  oscillationAmplitude quantitativeValue
+  sliceThickness quantitativeValue
+  slicingAngle quantitativeValue
+  slicingPlane quantitativeValue
+  vibrationFrequency quantitativeValue
+}
+
+Table TissueSampleSlicing{
+  input graphlink [ref: - SubjectState.state]
+  output graphlink [ref: - TissueSampleState.state]
+  slicingDevice graphlink [ref: - SlicingDeviceUsage.device]
+  tissueBathSolution graphlink [ref: - ChemicalMixture.name]
+  temperature quantitativeValue
+ }
